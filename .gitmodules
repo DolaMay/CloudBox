@@ -1,0 +1,9 @@
+[submodule "CloudBox.Server"]
+	path = CloudBox.Server
+	url = https://github.com/DolaMay/CloudBox.Server
+[submodule "CloudBox.Client"]
+	path = CloudBox.Client
+	url = https://github.com/DolaMay/CloudBox.Client
+[submodule "CloudBox.Core"]
+	path = CloudBox.Core
+	url = https://github.com/DolaMay/CloudBox.Core

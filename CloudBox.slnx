@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="CloudBox.Client/CloudBox.Client.csproj" />
+  <Project Path="CloudBox.Core/CloudBox.Core.csproj" />
+</Solution>
