@@ -3,10 +3,7 @@ name: Build iOS (Unsigned for SideStore)
 on:
   workflow_dispatch:
   push:
-    branches: [master]
-    paths:
-      - 'CloudBox.Client/**'
-      - 'CloudBox.Core/**'
+    branches: [main]
 
 jobs:
   build-ios:
@@ -14,6 +11,19 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Diagnose repository structure
+        run: |
+          echo "===== 当前工作目录 ====="
+          pwd
+          echo "===== 根目录内容 ====="
+          ls -la
+          echo "===== 子模块状态 ====="
+          git submodule status
+          echo "===== 查找所有 csproj ====="
+          find . -name "*.csproj" -type f
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -25,7 +35,14 @@ jobs:
 
       - name: Publish iOS App (No Codesign)
         run: |
-          dotnet publish CloudBox.Client/CloudBox.Client.csproj \
+          CSPROJ=$(find . -name "CloudBox.Client.csproj" -type f | head -n 1)
+          if [ -z "$CSPROJ" ]; then
+            echo "未找到 CloudBox.Client.csproj"
+            exit 1
+          fi
+          echo "找到项目文件: $CSPROJ"
+
+          dotnet publish "$CSPROJ" \
             -f net10.0-ios -c Release \
             -p:RuntimeIdentifier=ios-arm64 \
             -p:ArchiveOnBuild=true \
@@ -35,9 +52,15 @@ jobs:
       - name: Package unsigned IPA
         run: |
           mkdir -p Payload
-          # 找到 .app 目录并复制到 Payload
-          APP_PATH=$(find . -name "*.app" -type d | head -n 1)
-          if [ -z "$APP_PATH" ]; then echo "未找到 .app 文件"; exit 1; fi
+          APP_PATH=$(find . -name "*.app" -type d -path "*/Release-iphoneos/*" | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            APP_PATH=$(find . -name "*.app" -type d | head -n 1)
+          fi
+          if [ -z "$APP_PATH" ]; then
+            echo "未找到 .app 文件"
+            exit 1
+          fi
+          echo "找到 .app: $APP_PATH"
           cp -R "$APP_PATH" Payload/
           zip -r CloudBox-unsigned.ipa Payload/
           ls -la CloudBox-unsigned.ipa
