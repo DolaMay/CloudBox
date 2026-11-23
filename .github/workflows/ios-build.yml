@@ -30,8 +30,8 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
-      - name: Install MAUI iOS workload
-        run: dotnet workload install maui-ios
+      - name: Install MAUI workloads
+        run: dotnet workload install maui-android maui-ios
 
       - name: Publish iOS App (No Codesign)
         run: |
