@@ -25,6 +25,19 @@ jobs:
           echo "===== 查找所有 csproj ====="
           find . -name "*.csproj" -type f
 
+      - name: Select Xcode 26
+        run: |
+          XCODE_APP="$(find /Applications -maxdepth 1 -type d -name 'Xcode_26*.app' | sort -V | tail -1)"
+          if [[ -z "${XCODE_APP:-}" ]]; then
+            echo "Xcode 26 not found on this runner."
+            ls /Applications | grep Xcode
+            exit 1
+          fi
+          echo "Using ${XCODE_APP}"
+          sudo xcode-select -s "${XCODE_APP}/Contents/Developer"
+          sudo xcodebuild -runFirstLaunch || true
+          xcodebuild -version
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
