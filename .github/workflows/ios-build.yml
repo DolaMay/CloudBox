@@ -43,9 +43,10 @@ jobs:
         with:
           dotnet-version: '10.0.300'
 
-      - name: Remove SDK 11 manifests to avoid cross-version conflicts
+      - name: Remove all SDK 11 manifests to isolate SDK 10
         run: |
-          rm -rf ~/.dotnet/sdk-manifests/11.0.100/microsoft.net.workload.* || true
+          rm -rf ~/.dotnet/sdk-manifests/11.* || true
+          rm -rf /usr/local/share/dotnet/sdk-manifests/11.* || true
 
       - name: Install MAUI workloads
         run: dotnet workload install maui-android maui-ios --version 10.0.300
