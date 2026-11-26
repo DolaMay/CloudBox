@@ -43,14 +43,12 @@ jobs:
         with:
           dotnet-version: '10.0.300'
 
-      - name: Clean conflicting SDK 11 manifests
+      - name: Remove SDK 11 manifests to avoid cross-version conflicts
         run: |
-          rm -rf ~/.dotnet/sdk-manifests/11.0.100/microsoft.net.workload.emscripten.net10 || true
+          rm -rf ~/.dotnet/sdk-manifests/11.0.100/microsoft.net.workload.* || true
 
       - name: Install MAUI workloads
-        run: |
-          unset DOTNET_SDK_VERSION
-          dotnet workload install maui-android maui-ios --version 10.0.300
+        run: dotnet workload install maui-android maui-ios --version 10.0.300
 
       - name: Publish iOS App (No Codesign)
         run: |
