@@ -63,7 +63,6 @@ jobs:
           dotnet publish "$CSPROJ" \
             -f net10.0-ios -c Release \
             -p:RuntimeIdentifier=ios-arm64 \
-            -p:ArchiveOnBuild=true \
             -p:EnableCodeSigning=false \
             -p:MtouchUseLlvm=false
 
